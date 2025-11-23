@@ -9,6 +9,7 @@ All notable changes to this fork of agent-service-toolkit.
 - Traefik labels for `agent.buildzero.ai` with letsencryptresolver
 - `CHANGELOG.md` to track customizations
 - CI/CD: GitHub Actions deploy to VPS via SSH
+- `scripts/setup-secrets.sh` - Interactive script to configure GitHub secrets
 
 ### Changed
 - Database: Neon PostgreSQL (sa-east-1) instead of local container
