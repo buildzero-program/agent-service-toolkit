@@ -4,7 +4,7 @@ services:
 ## --------------------------- AGENT SERVICE --------------------------- ##
 
   agent-service:
-    image: ghcr.io/${GITHUB_REPOSITORY:-pedrohnas0/agent-service-toolkit}:${IMAGE_TAG:-latest}
+    image: ghcr.io/buildzero-program/agent-service-toolkit:${IMAGE_TAG:-latest}
 
     networks:
       - network
@@ -32,7 +32,7 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-      - DEFAULT_MODEL=${DEFAULT_MODEL:-gpt-4o}
+      # DEFAULT_MODEL is set per-request, not globally
 
       ## Observability
       - LANGSMITH_TRACING=${LANGSMITH_TRACING:-true}

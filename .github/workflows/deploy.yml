@@ -75,10 +75,17 @@ jobs:
 
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LANGSMITH_API_KEY: ${{ secrets.LANGSMITH_API_KEY }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          envs: OPENAI_API_KEY,GOOGLE_API_KEY,ANTHROPIC_API_KEY,LANGSMITH_API_KEY,AUTH_SECRET
           script: |
             # Pull latest image
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
@@ -86,10 +93,8 @@ jobs:
             # Create/update stack
             cd /opt/agent-service-toolkit
 
-            # Update compose with new image
-            export IMAGE_TAG="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
-
-            # Deploy stack
+            # Deploy stack with env vars
+            export IMAGE_TAG="latest"
             docker stack deploy -c compose.prod.yaml agent-service --with-registry-auth
 
             # Wait for service to be healthy
