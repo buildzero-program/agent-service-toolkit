@@ -7,6 +7,13 @@ from langchain_core.messages import AIMessage
 from service import app
 
 
+@pytest.fixture(autouse=True)
+def mock_init_ai_agents_db():
+    """Mock AI agents database initialization for all service tests."""
+    with patch("service.service.init_ai_agents_db", new_callable=AsyncMock):
+        yield
+
+
 @pytest.fixture
 def test_client():
     """Fixture to create a FastAPI test client."""

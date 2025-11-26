@@ -48,6 +48,10 @@ async def test_lifespan(monkeypatch, caplog) -> None:
     def fake_get_agent(agent_key: str):
         return agents[agent_key]
 
+    async def fake_init_ai_agents_db():
+        pass
+
+    monkeypatch.setattr(service, "init_ai_agents_db", fake_init_ai_agents_db)
     monkeypatch.setattr(service, "initialize_database", fake_initialize_database)
     monkeypatch.setattr(service, "initialize_store", fake_initialize_store)
     monkeypatch.setattr(service, "load_agent", fake_load_agent)
