@@ -34,8 +34,7 @@ async def get_ai_agent(agent_id: str) -> AIAgentResponse:
     agent = await repository.get_by_id(agent_id)
     if not agent:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"AI Agent {agent_id} not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"AI Agent {agent_id} not found"
         )
     return AIAgentResponse.model_validate(agent)
 
@@ -46,8 +45,7 @@ async def update_ai_agent(agent_id: str, data: AIAgentUpdate) -> AIAgentResponse
     agent = await repository.update(agent_id, data)
     if not agent:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"AI Agent {agent_id} not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"AI Agent {agent_id} not found"
         )
     logger.info(f"Updated AI Agent: {agent_id}")
     return AIAgentResponse.model_validate(agent)
@@ -59,8 +57,7 @@ async def delete_ai_agent(agent_id: str) -> None:
     deleted = await repository.delete(agent_id)
     if not deleted:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"AI Agent {agent_id} not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"AI Agent {agent_id} not found"
         )
     logger.info(f"Deleted AI Agent: {agent_id}")
 
@@ -71,8 +68,7 @@ async def set_default_ai_agent(agent_id: str) -> AIAgentResponse:
     agent = await repository.set_default(agent_id)
     if not agent:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"AI Agent {agent_id} not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"AI Agent {agent_id} not found"
         )
     logger.info(f"Set AI Agent {agent_id} as default")
     return AIAgentResponse.model_validate(agent)

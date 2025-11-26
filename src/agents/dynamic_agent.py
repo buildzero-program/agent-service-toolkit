@@ -45,6 +45,5 @@ async def dynamic_agent(
 
     # Save messages without system prompt to avoid duplication in history
     return entrypoint.final(
-        value={"messages": [response]},
-        save={"messages": messages + [response]}
+        value={"messages": [response]}, save={"messages": messages + [response]}
     )

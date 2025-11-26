@@ -38,7 +38,8 @@ async def init_db() -> None:
             _get_connection_string(),
             echo=settings.is_dev(),
             pool_size=settings.POSTGRES_MIN_CONNECTIONS_PER_POOL,
-            max_overflow=settings.POSTGRES_MAX_CONNECTIONS_PER_POOL - settings.POSTGRES_MIN_CONNECTIONS_PER_POOL,
+            max_overflow=settings.POSTGRES_MAX_CONNECTIONS_PER_POOL
+            - settings.POSTGRES_MIN_CONNECTIONS_PER_POOL,
         )
         _async_session = async_sessionmaker(_engine, expire_on_commit=False)
 
@@ -99,28 +100,21 @@ class AIAgentRepository:
     async def get_by_id(self, agent_id: str) -> Optional[AIAgent]:
         """Get an AI Agent by ID."""
         async with await get_session() as session:
-            result = await session.execute(
-                select(AIAgent).where(AIAgent.id == agent_id)
-            )
+            result = await session.execute(select(AIAgent).where(AIAgent.id == agent_id))
             return result.scalar_one_or_none()
 
     async def get_default(self) -> Optional[AIAgent]:
         """Get the default AI Agent."""
         async with await get_session() as session:
             result = await session.execute(
-                select(AIAgent).where(
-                    AIAgent.is_default == True,
-                    AIAgent.is_active == True
-                )
+                select(AIAgent).where(AIAgent.is_default == True, AIAgent.is_active == True)
             )
             return result.scalar_one_or_none()
 
     async def update(self, agent_id: str, data: AIAgentUpdate) -> Optional[AIAgent]:
         """Update an AI Agent."""
         async with await get_session() as session:
-            result = await session.execute(
-                select(AIAgent).where(AIAgent.id == agent_id)
-            )
+            result = await session.execute(select(AIAgent).where(AIAgent.id == agent_id))
             agent = result.scalar_one_or_none()
 
             if not agent:
@@ -138,9 +132,7 @@ class AIAgentRepository:
     async def delete(self, agent_id: str) -> bool:
         """Delete an AI Agent (soft delete by setting is_active=False)."""
         async with await get_session() as session:
-            result = await session.execute(
-                select(AIAgent).where(AIAgent.id == agent_id)
-            )
+            result = await session.execute(select(AIAgent).where(AIAgent.id == agent_id))
             agent = result.scalar_one_or_none()
 
             if not agent:
