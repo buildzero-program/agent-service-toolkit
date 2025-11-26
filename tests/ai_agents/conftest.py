@@ -1,11 +1,18 @@
 """Fixtures for AI Agents tests."""
 
+import sys
+from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-from fastapi.testclient import TestClient
+# Add src to path before any imports that depend on it
+src_path = Path(__file__).parent.parent.parent / "src"
+if str(src_path) not in sys.path:
+    sys.path.insert(0, str(src_path))
 
-from service import app
+import pytest  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
+
+from service import app  # noqa: E402
 
 
 @pytest.fixture

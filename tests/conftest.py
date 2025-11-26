@@ -1,7 +1,14 @@
 import os
+import sys
+from pathlib import Path
 from unittest.mock import patch
 
-import pytest
+# Add src to path BEFORE pytest imports anything else
+src_path = Path(__file__).parent.parent / "src"
+if str(src_path) not in sys.path:
+    sys.path.insert(0, str(src_path))
+
+import pytest  # noqa: E402
 
 
 def pytest_addoption(parser):
