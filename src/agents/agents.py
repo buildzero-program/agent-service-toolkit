@@ -5,8 +5,8 @@ from langgraph.pregel import Pregel
 
 from agents.bg_task_agent.bg_task_agent import bg_task_agent
 from agents.chatbot import chatbot
-from agents.dynamic_agent import dynamic_agent
 from agents.command_agent import command_agent
+from agents.dynamic_agent import dynamic_agent
 from agents.github_mcp_agent.github_mcp_agent import github_mcp_agent
 from agents.interrupt_agent import interrupt_agent
 from agents.knowledge_base_agent import kb_agent

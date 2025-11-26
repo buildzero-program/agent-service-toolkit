@@ -1,12 +1,11 @@
 """FastAPI router for AI Agents API."""
 
 import logging
-from typing import List
 
 from fastapi import APIRouter, HTTPException, status
 
-from ai_agents.schemas import AIAgentCreate, AIAgentUpdate, AIAgentResponse
 from ai_agents.repository import repository
+from ai_agents.schemas import AIAgentCreate, AIAgentResponse, AIAgentUpdate
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +20,8 @@ async def create_ai_agent(data: AIAgentCreate) -> AIAgentResponse:
     return AIAgentResponse.model_validate(agent)
 
 
-@router.get("", response_model=List[AIAgentResponse])
-async def list_ai_agents() -> List[AIAgentResponse]:
+@router.get("", response_model=list[AIAgentResponse])
+async def list_ai_agents() -> list[AIAgentResponse]:
     """List all AI Agents."""
     agents = await repository.list_all()
     return [AIAgentResponse.model_validate(agent) for agent in agents]

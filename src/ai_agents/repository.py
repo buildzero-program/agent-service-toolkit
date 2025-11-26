@@ -1,12 +1,11 @@
 """Repository for AI Agents database operations."""
 
 import logging
-from typing import Optional
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 from sqlalchemy import select, update
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from ai_agents.models import AIAgent, Base
 from ai_agents.schemas import AIAgentCreate, AIAgentUpdate
@@ -71,7 +70,7 @@ class AIAgentRepository:
             # If this agent is default, unset other defaults
             if data.is_default:
                 await session.execute(
-                    update(AIAgent).where(AIAgent.is_default == True).values(is_default=False)
+                    update(AIAgent).where(AIAgent.is_default.is_(True)).values(is_default=False)
                 )
 
             agent = AIAgent(
@@ -93,25 +92,27 @@ class AIAgentRepository:
         """List all AI Agents."""
         async with await get_session() as session:
             result = await session.execute(
-                select(AIAgent).where(AIAgent.is_active == True).order_by(AIAgent.created_at.desc())
+                select(AIAgent)
+                .where(AIAgent.is_active.is_(True))
+                .order_by(AIAgent.created_at.desc())
             )
             return list(result.scalars().all())
 
-    async def get_by_id(self, agent_id: str) -> Optional[AIAgent]:
+    async def get_by_id(self, agent_id: str) -> AIAgent | None:
         """Get an AI Agent by ID."""
         async with await get_session() as session:
             result = await session.execute(select(AIAgent).where(AIAgent.id == agent_id))
             return result.scalar_one_or_none()
 
-    async def get_default(self) -> Optional[AIAgent]:
+    async def get_default(self) -> AIAgent | None:
         """Get the default AI Agent."""
         async with await get_session() as session:
             result = await session.execute(
-                select(AIAgent).where(AIAgent.is_default == True, AIAgent.is_active == True)
+                select(AIAgent).where(AIAgent.is_default.is_(True), AIAgent.is_active.is_(True))
             )
             return result.scalar_one_or_none()
 
-    async def update(self, agent_id: str, data: AIAgentUpdate) -> Optional[AIAgent]:
+    async def update(self, agent_id: str, data: AIAgentUpdate) -> AIAgent | None:
         """Update an AI Agent."""
         async with await get_session() as session:
             result = await session.execute(select(AIAgent).where(AIAgent.id == agent_id))
@@ -143,12 +144,12 @@ class AIAgentRepository:
             await session.commit()
             return True
 
-    async def set_default(self, agent_id: str) -> Optional[AIAgent]:
+    async def set_default(self, agent_id: str) -> AIAgent | None:
         """Set an AI Agent as the default."""
         async with await get_session() as session:
             # First, check if agent exists
             result = await session.execute(
-                select(AIAgent).where(AIAgent.id == agent_id, AIAgent.is_active == True)
+                select(AIAgent).where(AIAgent.id == agent_id, AIAgent.is_active.is_(True))
             )
             agent = result.scalar_one_or_none()
 
@@ -157,7 +158,7 @@ class AIAgentRepository:
 
             # Unset all other defaults
             await session.execute(
-                update(AIAgent).where(AIAgent.is_default == True).values(is_default=False)
+                update(AIAgent).where(AIAgent.is_default.is_(True)).values(is_default=False)
             )
 
             # Set this agent as default
@@ -172,6 +173,6 @@ class AIAgentRepository:
 repository = AIAgentRepository()
 
 
-async def get_default_agent() -> Optional[AIAgent]:
+async def get_default_agent() -> AIAgent | None:
     """Convenience function to get the default agent."""
     return await repository.get_default()
