@@ -1,8 +1,9 @@
 """Fixtures for AI Agents tests."""
 
+from unittest.mock import patch
+
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import AsyncMock, patch, MagicMock
 
 from service import app
 

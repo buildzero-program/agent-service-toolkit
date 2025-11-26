@@ -1,9 +1,8 @@
 """Tests for AI Agents API endpoints."""
 
-import pytest
-from unittest.mock import AsyncMock, patch
 from datetime import datetime
 from types import SimpleNamespace
+from unittest.mock import AsyncMock, patch
 
 
 def make_agent(**kwargs):
