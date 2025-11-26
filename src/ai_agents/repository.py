@@ -20,6 +20,8 @@ _async_session = None
 
 def _get_connection_string() -> str:
     """Build async PostgreSQL connection string."""
+    if settings.POSTGRES_PASSWORD is None:
+        raise ValueError("POSTGRES_PASSWORD is not configured")
     return (
         f"postgresql+asyncpg://{settings.POSTGRES_USER}:"
         f"{settings.POSTGRES_PASSWORD.get_secret_value()}@"
@@ -51,8 +53,11 @@ async def init_db() -> None:
 
 async def get_session() -> AsyncSession:
     """Get database session."""
+    global _async_session
     if _async_session is None:
         await init_db()
+    if _async_session is None:
+        raise RuntimeError("Database session not initialized")
     return _async_session()
 
 
