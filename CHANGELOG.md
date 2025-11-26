@@ -6,10 +6,27 @@ All notable changes to this fork of agent-service-toolkit.
 
 ### Added
 - `compose.local.yaml` - Local development compose (uses Neon PostgreSQL, no local postgres)
-- `src/ai_agents/` - Module for dynamic AI agents management (in progress)
 - AUTH_SECRET authentication configured
 
+---
+
+## 2025-11-26
+
+### Added
+- `src/ai_agents/` - Complete CRUD API module for AI agents management
+  - `models.py` - SQLAlchemy models for AIAgent
+  - `repository.py` - Repository pattern with SQLite persistence
+  - `router.py` - FastAPI routes (GET, POST, PUT, DELETE)
+  - `schemas.py` - Pydantic schemas for validation
+- `src/agents/dynamic_agent.py` - DynamicAgent class for external integrations
+  - Reads agent config from external API (core-agent)
+  - Supports Bearer token authentication
+- `/stream` endpoint now accepts `agent_id` query parameter
+- Comprehensive test suite in `tests/ai_agents/`
+
 ### Changed
+- Updated `src/agents/agents.py` to include DynamicAgent
+- Added `httpx` dependency for external HTTP calls
 - Port changed to 8180 to avoid conflicts
 - Removed `compose.yaml` (replaced by compose.local.yaml)
 - Removed streamlit_app service from local dev setup

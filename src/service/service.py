@@ -22,6 +22,8 @@ from langgraph.types import Command, Interrupt
 from langsmith import Client as LangsmithClient
 
 from agents import DEFAULT_AGENT, AgentGraph, get_agent, get_all_agent_info, load_agent
+from ai_agents.repository import init_db as init_ai_agents_db
+from ai_agents.router import router as ai_agents_router
 from core import settings
 from memory import initialize_database, initialize_store
 from schema import (
@@ -69,6 +71,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     and agents with async loading - for example for starting up MCP clients.
     """
     try:
+        # Initialize AI Agents database (creates tables if not exist)
+        await init_ai_agents_db()
+
         # Initialize both checkpointer (for short-term memory) and store (for long-term memory)
         async with initialize_database() as saver, initialize_store() as store:
             # Set up both components
@@ -428,3 +433,4 @@ async def health_check():
 
 
 app.include_router(router)
+app.include_router(ai_agents_router, dependencies=[Depends(verify_bearer)])
