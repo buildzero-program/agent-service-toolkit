@@ -18,6 +18,11 @@ _engine = None
 _async_session = None
 
 
+def _is_db_configured() -> bool:
+    """Check if database is configured."""
+    return settings.POSTGRES_PASSWORD is not None
+
+
 def _get_connection_string() -> str:
     """Build async PostgreSQL connection string."""
     if settings.POSTGRES_PASSWORD is None:
@@ -31,8 +36,19 @@ def _get_connection_string() -> str:
 
 
 async def init_db() -> None:
-    """Initialize database and create tables."""
+    """Initialize database and create tables.
+
+    If POSTGRES_PASSWORD is not configured, this will skip initialization
+    and log a warning. The dynamic agent will fall back to default settings.
+    """
     global _engine, _async_session
+
+    if not _is_db_configured():
+        logger.warning(
+            "AI Agents database not configured (POSTGRES_PASSWORD not set). "
+            "Dynamic agent will use default settings."
+        )
+        return
 
     if _engine is None:
         _engine = create_async_engine(
@@ -57,7 +73,9 @@ async def get_session() -> AsyncSession:
     if _async_session is None:
         await init_db()
     if _async_session is None:
-        raise RuntimeError("Database session not initialized")
+        raise RuntimeError(
+            "Database session not initialized. Ensure POSTGRES_PASSWORD is configured."
+        )
     return _async_session()
 
 
@@ -179,5 +197,10 @@ repository = AIAgentRepository()
 
 
 async def get_default_agent() -> AIAgent | None:
-    """Convenience function to get the default agent."""
+    """Convenience function to get the default agent.
+
+    Returns None if database is not configured.
+    """
+    if not _is_db_configured():
+        return None
     return await repository.get_default()
