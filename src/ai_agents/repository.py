@@ -57,6 +57,8 @@ async def init_db() -> None:
             pool_size=settings.POSTGRES_MIN_CONNECTIONS_PER_POOL,
             max_overflow=settings.POSTGRES_MAX_CONNECTIONS_PER_POOL
             - settings.POSTGRES_MIN_CONNECTIONS_PER_POOL,
+            pool_pre_ping=True,  # Validate connection before use (handles Neon timeouts)
+            pool_recycle=300,  # Recycle connections every 5 minutes
         )
         _async_session = async_sessionmaker(_engine, expire_on_commit=False)
 
@@ -196,11 +198,45 @@ class AIAgentRepository:
 repository = AIAgentRepository()
 
 
-async def get_default_agent() -> AIAgent | None:
+async def get_default_agent(max_retries: int = 2) -> AIAgent | None:
     """Convenience function to get the default agent.
 
-    Returns None if database is not configured.
+    Returns None if database is not configured or if all retries fail.
+    Uses retry logic to handle transient connection errors (e.g., Neon idle timeouts).
     """
     if not _is_db_configured():
         return None
-    return await repository.get_default()
+
+    last_error = None
+    for attempt in range(max_retries + 1):
+        try:
+            return await repository.get_default()
+        except Exception as e:
+            last_error = e
+            error_msg = str(e).lower()
+            # Check if it's a connection error worth retrying
+            is_connection_error = any(
+                msg in error_msg
+                for msg in ["connection", "closed", "timeout", "reset", "refused"]
+            )
+
+            if is_connection_error and attempt < max_retries:
+                logger.warning(
+                    f"Database connection error (attempt {attempt + 1}/{max_retries + 1}): {e}. Retrying..."
+                )
+                # Reset engine to force new connection on next attempt
+                global _engine, _async_session
+                if _engine is not None:
+                    await _engine.dispose()
+                _engine = None
+                _async_session = None
+                continue
+            else:
+                break
+
+    # Log final error and return None as fallback
+    logger.error(
+        f"Failed to get default agent after {max_retries + 1} attempts: {last_error}. "
+        "Using default settings."
+    )
+    return None
