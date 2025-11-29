@@ -5,8 +5,29 @@ All notable changes to this fork of agent-service-toolkit.
 ## Unreleased
 
 ### Added
-- `compose.local.yaml` - Local development compose (uses Neon PostgreSQL, no local postgres)
-- AUTH_SECRET authentication configured
+- `max_tokens` field in AIAgent model for conversation context limit
+- `trim_conversation()` function using LangChain's `trim_messages()` utility
+- Token-based context limiting to prevent rate limit timeouts
+
+### Changed
+- Dynamic agent now trims conversation history based on `max_tokens` setting (default: 16000)
+
+---
+
+## 2025-11-27
+
+### Fixed
+- Neon database connection timeouts with retry logic (`50bec35`)
+- Integration test updated for new dynamic agent welcome message (`94c21e7`)
+- AI agents DB initialization made optional for test-docker (`042e319`)
+- Tests updated to work with dynamic agent as default (`e9733a1`)
+- Mypy type errors resolved in ai_agents module (`3a0b6b7`)
+- Pytest import issues resolved for ai_agents module (`024b04d`)
+- Unused imports removed in test files (`ca01e95`)
+- Ruff lint errors resolved in ai_agents module (`db80019`)
+
+### Changed
+- Python files formatted with ruff (`3758b27`)
 
 ---
 

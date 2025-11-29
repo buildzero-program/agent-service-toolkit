@@ -14,6 +14,7 @@ class Provider(StrEnum):
     AWS = auto()
     OLLAMA = auto()
     OPENROUTER = auto()
+    XAI = auto()
     FAKE = auto()
 
 
@@ -94,6 +95,15 @@ class OpenRouterModelName(StrEnum):
     GEMINI_25_FLASH = "google/gemini-2.5-flash"
 
 
+class XAIModelName(StrEnum):
+    """https://docs.x.ai/docs/models - Grok models with unique X/Twitter search"""
+
+    GROK_3 = "grok-3"
+    GROK_3_MINI = "grok-3-mini"
+    GROK_4 = "grok-4"
+    GROK_4_1_FAST = "grok-4-1-fast-reasoning"
+
+
 class OpenAICompatibleName(StrEnum):
     """https://platform.openai.com/docs/guides/text-generation"""
 
@@ -118,5 +128,6 @@ AllModelEnum: TypeAlias = (
     | AWSModelName
     | OllamaModelName
     | OpenRouterModelName
+    | XAIModelName
     | FakeModelName
 )

@@ -6,8 +6,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.service
-    ports:
-      - "8180:8180"
+    network_mode: "host"
     env_file:
       - .env
     healthcheck:

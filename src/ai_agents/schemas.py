@@ -14,6 +14,9 @@ class AIAgentCreate(BaseModel):
     model: str = Field(default="claude-haiku-4-5")
     temperature: float = Field(default=0.5, ge=0, le=1)
     is_default: bool = Field(default=False)
+    # Memory limits
+    # max_messages: int | None = Field(default=50, ge=1, le=200)  # TODO: implement later
+    max_tokens: int | None = Field(default=16000, ge=1000, le=128000)
 
 
 class AIAgentUpdate(BaseModel):
@@ -25,6 +28,9 @@ class AIAgentUpdate(BaseModel):
     model: str | None = None
     temperature: float | None = Field(None, ge=0, le=1)
     is_active: bool | None = None
+    # Memory limits
+    # max_messages: int | None = Field(None, ge=1, le=200)  # TODO: implement later
+    max_tokens: int | None = Field(None, ge=1000, le=128000)
 
 
 class AIAgentResponse(BaseModel):
@@ -38,6 +44,9 @@ class AIAgentResponse(BaseModel):
     temperature: float
     is_default: bool
     is_active: bool
+    # Memory limits
+    # max_messages: int | None  # TODO: implement later
+    max_tokens: int | None
     created_at: datetime
     updated_at: datetime | None
 

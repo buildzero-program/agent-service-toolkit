@@ -26,6 +26,10 @@ class AIAgent(Base):
     model: Mapped[str] = mapped_column(String(50), default="claude-haiku-4-5", nullable=False)
     temperature: Mapped[float] = mapped_column(default=0.5, nullable=False)
 
+    # Memory Limits (for long conversations)
+    # max_messages: Mapped[int | None] = mapped_column(default=50, nullable=True)  # TODO: implement later
+    max_tokens: Mapped[int | None] = mapped_column(default=16000, nullable=True)
+
     # Status
     is_default: Mapped[bool] = mapped_column(default=False, nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
